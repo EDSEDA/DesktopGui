@@ -45,6 +45,17 @@ class MainWindow(QMainWindow):
         # Добавляем background_label в layout с координатами (0, 0)
         self.layout.addWidget(background_label, 0, 0, 1, 1)
 
+    def init_widgets(self):
+        # Основной виджет и главный макет
+        self.central_widget = QWidget(self)
+        self.setCentralWidget(self.central_widget)
+        self.main_layout = QVBoxLayout(self.central_widget)
+
+        self._init_header()
+        self._init_body()
+        self._init_footer()
+
+    ##################################
     def _init_header(self):
         # Верхний макет для названия компании и даты/времени
         top_layout = QHBoxLayout()
@@ -66,17 +77,6 @@ class MainWindow(QMainWindow):
         # Таймер для обновления времени каждую секунду
         self._init_timer()
 
-    def init_widgets(self):
-
-        # Основной виджет и главный макет
-        self.central_widget = QWidget(self)
-        self.setCentralWidget(self.central_widget)
-        self.main_layout = QVBoxLayout(self.central_widget)
-
-        self._init_header()
-        self._init_body()
-        self._init_footer()
-
     def _init_timer(self):
         self.timer = QTimer(self)
         self.timer.timeout.connect(self._update_time)
@@ -86,9 +86,7 @@ class MainWindow(QMainWindow):
         current_time = QDateTime.currentDateTime().toString('dd.MM.yyyy hh:mm:ss')
         self.date_time_label.setText(current_time)
 
-    def _init_footer(self):
-        ...
-
+    ##################################
     def _init_body(self):
         # Макет для имени пользователя и профиля
         profile_layout = QHBoxLayout()
@@ -113,14 +111,14 @@ class MainWindow(QMainWindow):
         self.client_profile_layout.addWidget(self.avatar_label)
 
         # ID пользователя
-        self.client_id_label = QLabel(f'ID: {0}', self)     # set id
+        self.client_id_label = QLabel(f'ID: {0}', self)  # set id
         self.client_id_label.setFont(QFont('Arial', 12))
         self.client_profile_layout.addWidget(self.client_id_label)
 
         # Дополнительная информация о пользователе
         is_loyal = False
         car = 'AUDI RS6'
-        self.client_info_label = QLabel(f'Пр-ма лояльности: {is_loyal}\nМашина: {car}', self)   # is_loyal and car
+        self.client_info_label = QLabel(f'Пр-ма лояльности: {is_loyal}\nМашина: {car}', self)  # is_loyal and car
         self.client_info_label.setFont(QFont('Arial', 12))
         self.client_profile_layout.addWidget(self.client_info_label)
 
@@ -140,6 +138,10 @@ class MainWindow(QMainWindow):
         if client_avatar_path:
             new_avatar_pixmap = QPixmap(client_avatar_path)
             self.avatar_label.setPixmap(new_avatar_pixmap.scaled(100, 100, Qt.KeepAspectRatio))
+
+    ##################################
+    def _init_footer(self):
+        ...
 
 
 def main():
