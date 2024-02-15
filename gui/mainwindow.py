@@ -4,7 +4,7 @@ from queue import Queue
 from PyQt5.QtCore import QTimer, QDateTime, Qt, QThread, pyqtSignal
 from PyQt5.QtGui import QPixmap, QFont
 from PyQt5.QtWidgets import (QLabel, QVBoxLayout, QHBoxLayout, QWidget,
-                             QApplication, QMainWindow, QStatusBar, QTextEdit)
+                             QApplication, QMainWindow, QStatusBar, QTextEdit, QGridLayout)
 
 from rabbitmq_client.client import RabbitMQClient
 from rabbitmq_client.schema import RabbitMessage
