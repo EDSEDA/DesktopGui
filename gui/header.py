@@ -7,7 +7,7 @@ class Header(QHBoxLayout):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.addStretch()
-        self.company_name_label = QLabel('TATNEFT')
+        self.company_name_label = QLabel('Компания Х')
         self.company_name_label.setFont(QFont('Arial', 18))
         self.company_name_label.setFixedHeight(30)
         self.addWidget(self.company_name_label, alignment=Qt.AlignLeft)

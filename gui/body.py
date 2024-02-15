@@ -12,12 +12,10 @@ class Body(QWidget):
 
         # Макет для имени пользователя и профиля
         profile_layout = QHBoxLayout()
-        self.text_edit = QTextEdit(self)
-        profile_layout.addWidget(self.text_edit)
 
         # Виджет для профиля пользователя
         self._init_client_profile()
-        profile_layout.addWidget(self.client_profile_widget, alignment=Qt.AlignRight)
+        profile_layout.addWidget(self.client_profile_widget, )  # alignment=Qt.AlignRight
 
         # Добавляем profile_layout в main_layout
         self.main_layout.addLayout(profile_layout)
@@ -39,11 +37,6 @@ class Body(QWidget):
         self.avatar_label.setPixmap(self.avatar_pixmap.scaled(100, 100, Qt.KeepAspectRatio))
         self.client_profile_layout.addWidget(self.avatar_label)
 
-        # ID пользователя
-        self.client_id_label = QLabel('ID: 0', self)  # Пример ID
-        self.client_id_label.setFont(QFont('Arial', 12))
-        self.client_profile_layout.addWidget(self.client_id_label)
-
         # Дополнительная информация о пользователе
         is_loyal = False
         car = 'AUDI RS6'
@@ -58,11 +51,11 @@ class Body(QWidget):
     def update_with_rabbit_message(self, rabbit_message):
         self.client_name_label.setText(rabbit_message.name)
         self.client_info_label.setText(
-            f"Car Models: {rabbit_message.carModels}\n"
-            f"Gas Station: {rabbit_message.gasStation}\n"
-            f"Indexes: {rabbit_message.indexes}\n"
-            f"Sails: {rabbit_message.sails}\n"
-            f"Recommendations: {', '.join(rabbit_message.recommendations)}"
+            f"Модель машины: {rabbit_message.carModels}\n"
+            f"Номер колонки: {rabbit_message.gasStation}\n"
+            f"Идентификатор: {rabbit_message.indexes}\n"
+            f"Скидка: {rabbit_message.sails}\n"
+            f"Рекомендации: {', '.join(rabbit_message.recommendations)}"
         )
 
     def update_client_profile(self, client_id, client_info, client_avatar_path):
