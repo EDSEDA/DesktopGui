@@ -4,6 +4,9 @@
 ## About
 App with PyQt5 and rabbitMQ listener
 
+## Dependencies
+- RabbitMQ
+
 ## Quiq start
 
 Create venv:
