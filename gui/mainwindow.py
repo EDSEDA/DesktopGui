@@ -12,7 +12,7 @@ import json
 
 
 class MainWindow(QMainWindow):
-    message_signal = pyqtSignal(bytes)  # Создаем сигнал для передачи сообщений в GUI поток
+    message_signal = pyqtSignal(RabbitMessage)
 
     def __init__(self):
         super(MainWindow, self).__init__()
