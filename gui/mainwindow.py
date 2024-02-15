@@ -1,16 +1,25 @@
+import json
 import sys
 from queue import Queue
 
-from PyQt5.QtCore import QTimer, QDateTime, Qt, QThread, pyqtSignal
+from PyQt5.QtCore import QThreadPool, QRunnable, pyqtSignal, QTimer, QDateTime, Qt
 from PyQt5.QtGui import QPixmap, QFont
 from PyQt5.QtWidgets import (QLabel, QVBoxLayout, QHBoxLayout, QWidget,
                              QApplication, QMainWindow, QStatusBar, QTextEdit, QGridLayout)
 
 from rabbitmq_client.client import RabbitMQClient
 from rabbitmq_client.schema import RabbitMessage
-import json
-from config import settings
 
+
+class Worker(QRunnable):
+    def __init__(self, function, *args, **kwargs):
+        super().__init__()
+        self.function = function
+        self.args = args
+        self.kwargs = kwargs
+
+    def run(self):
+        self.function(*self.args, **self.kwargs)
 
 class MainWindow(QMainWindow):
     message_signal = pyqtSignal(RabbitMessage)
@@ -167,11 +176,12 @@ class MainWindow(QMainWindow):
             f"Recommendations: {', '.join(rabbit_message.recomendations)}"
         )
         self.text_edit.append(message_text)
+
     def start(self):
-        # Запускаем поток для проверки наличия новых сообщений в queue
-        self.thread = QThread()  # Создаем QThread
-        self.thread.started.connect(self.check_queue)
-        self.thread.start()
+        # Создаем рабочего и передаем в него функцию для выполнения
+        self.worker = Worker(self.check_queue)
+        # Запускаем рабочего в пуле потоков
+        QThreadPool.globalInstance().start(self.worker)
 
     def check_queue(self):
         while True:
@@ -184,6 +194,7 @@ class MainWindow(QMainWindow):
                     self.message_signal.emit(rabbit_message)  # Отправляем экземпляр в GUI поток
                 except Exception as e:
                     print(f"Error processing message: {e}")
+
 
 def main():
     app = QApplication(sys.argv)

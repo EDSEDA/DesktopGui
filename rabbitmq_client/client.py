@@ -2,7 +2,6 @@ import logging
 from threading import Thread
 from config import settings
 import pika
-
 logging.basicConfig(level=logging.INFO)
 
 
