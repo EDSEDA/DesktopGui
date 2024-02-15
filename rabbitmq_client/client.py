@@ -1,16 +1,25 @@
 import logging
 from threading import Thread
-
+from config import settings
 import pika
 
 logging.basicConfig(level=logging.INFO)
 
 
 class RabbitMQClient:
-    def __init__(self, queue_name, gui_queue):
+    def __init__(self, gui_queue, queue_name=settings.QUEUE_NAME):
         self.queue_name = queue_name
-        self.gui_queue = gui_queue  # Queue to communicate with the GUI thread
-        self.connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+        self.gui_queue = gui_queue
+        self.connection = pika.BlockingConnection(
+            pika.ConnectionParameters(
+                host=settings.RABBITMQ_HOST,
+                port=settings.RABBITMQ_PORT,
+                credentials=pika.PlainCredentials(
+                    settings.RABBITMQ_USER,
+                    settings.RABBITMQ_PASSWORD
+                )
+            )
+        )
         self.channel = self.connection.channel()
 
         # Declare the queue in case it doesn't already exist

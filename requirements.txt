@@ -1,2 +1,6 @@
-PyQt5==5.15.4
+PyQt5~=5.15.10
 pika==1.2.0
+
+pydantic~=2.6.1
+pydantic-settings~=2.1.0
+
