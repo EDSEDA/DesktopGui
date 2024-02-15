@@ -2,11 +2,13 @@ import json
 import sys
 from queue import Queue
 
-from PyQt5.QtCore import QThreadPool, QRunnable, pyqtSignal, QTimer, QDateTime, Qt
-from PyQt5.QtGui import QPixmap, QFont
-from PyQt5.QtWidgets import (QLabel, QVBoxLayout, QHBoxLayout, QWidget,
-                             QApplication, QMainWindow, QStatusBar, QTextEdit, QGridLayout)
+from PyQt5.QtCore import QThreadPool, QRunnable, pyqtSignal
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtWidgets import (QLabel, QVBoxLayout, QWidget,
+                             QApplication, QMainWindow, QStatusBar, QGridLayout)
 
+from gui.body import Body
+from gui.header import Header
 from rabbitmq_client.client import RabbitMQClient
 from rabbitmq_client.schema import RabbitMessage
 
@@ -70,100 +72,15 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.central_widget)
         self.main_layout = QVBoxLayout(self.central_widget)
 
-        self._init_header()
-        self._init_body()
+        self.header = Header()
+        self.main_layout.addLayout(self.header)
+        self.body = Body()
+        self.main_layout.addWidget(self.body)
+
         self._init_footer()
 
-    ##################################
-    def _init_header(self):
-        # Верхний макет для названия компании и даты/времени
-        top_layout = QHBoxLayout()
-        self.main_layout.addLayout(top_layout)
-
-        top_layout.addStretch()
-        # Название компании
-        self.company_name_label = QLabel('TATNEFT', self)
-        self.company_name_label.setFont(QFont('Arial', 18))
-        self.company_name_label.setFixedHeight(30)
-        top_layout.addWidget(self.company_name_label, alignment=Qt.AlignLeft)
-
-        # Дата и время (выровнены по правому краю)
-        self.date_time_label = QLabel(self)
-        self.date_time_label.setFont(QFont('Arial', 16))
-        self.date_time_label.setFixedHeight(30)
-        top_layout.addWidget(self.date_time_label, alignment=Qt.AlignRight)
-        top_layout.addStretch()
-        # Таймер для обновления времени каждую секунду
-        self._init_timer()
-
-    def _init_timer(self):
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self._update_time)
-        self.timer.start(1000)
-
-    def _update_time(self):
-        current_time = QDateTime.currentDateTime().toString('dd.MM.yyyy hh:mm:ss')
-        self.date_time_label.setText(current_time)
-
-    ##################################
-    def _init_body(self):
-        # Макет для имени пользователя и профиля
-        profile_layout = QHBoxLayout()
-        self.main_layout.addLayout(profile_layout)
-        self.text_edit = QTextEdit(self)
-        profile_layout.addWidget(self.text_edit)
-        # Виджет для профиля пользователя
-        self._init_client_profile()
-        profile_layout.addWidget(self.client_profile_widget, alignment=Qt.AlignRight)
-
-    def _init_client_profile(self):
-        self.client_profile_layout = QVBoxLayout()
-
-        # Имя пользователя
-        self.client_name_label = QLabel('Владимир', self)
-        self.client_name_label.setFont(QFont('Arial', 20))
-        self.client_profile_layout.addWidget(self.client_name_label, alignment=Qt.AlignLeft)
-
-        # Аватар пользователя
-        self.avatar_label = QLabel(self)
-        self.avatar_pixmap = QPixmap('')  # Укажите путь к изображению аватара
-        self.avatar_label.setPixmap(self.avatar_pixmap.scaled(100, 100, Qt.KeepAspectRatio))
-        self.client_profile_layout.addWidget(self.avatar_label)
-
-        # ID пользователя
-        self.client_id_label = QLabel(f'ID: {0}', self)  # set id
-        self.client_id_label.setFont(QFont('Arial', 12))
-        self.client_profile_layout.addWidget(self.client_id_label)
-
-        # Дополнительная информация о пользователе
-        is_loyal = False
-        car = 'AUDI RS6'
-        self.client_info_label = QLabel(f'Пр-ма лояльности: {is_loyal}\nМашина: {car}', self)  # is_loyal and car
-        self.client_info_label.setFont(QFont('Arial', 12))
-        self.client_profile_layout.addWidget(self.client_info_label)
-
-        # Контейнер для профиля
-        self.client_profile_widget = QWidget()
-        self.client_profile_widget.setLayout(self.client_profile_layout)
-
-    def update_client_profile(self, client_id, client_info, client_avatar_path):
-        """Метод для обновления информации профиля пользователя."""
-        # Обновление ID пользователя
-        self.client_id_label.setText(f'ID: {client_id}')
-
-        # Обновление информации о пользователе
-        self.client_info_label.setText(client_info)
-
-        # Обновление аватара пользователя, если предоставлен новый путь
-        if client_avatar_path:
-            new_avatar_pixmap = QPixmap(client_avatar_path)
-            self.avatar_label.setPixmap(new_avatar_pixmap.scaled(100, 100, Qt.KeepAspectRatio))
-
-    ##################################
     def _init_footer(self):
         ...
-
-    ##################################
 
     def update_text_edit(self, rabbit_message):
         # Обновляем виджет текстовым сообщением
