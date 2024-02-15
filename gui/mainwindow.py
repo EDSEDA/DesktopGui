@@ -60,12 +60,6 @@ class MainWindow(QMainWindow):
         self.rabbitmq_client.start_consuming()  # Начинаем потребление сообщений
         self.message_signal.connect(self.update_text_edit)
 
-    def init_status_bar(self):
-        # Создание статусной строки
-        self.status_bar = QStatusBar(self)
-        self.setStatusBar(self.status_bar)
-        self.status_bar.showMessage("Готово", 5000)
-
     def init_widgets(self):
         # Основной виджет и главный макет
         self.central_widget = QWidget(self)
@@ -77,23 +71,8 @@ class MainWindow(QMainWindow):
         self.body = Body()
         self.main_layout.addWidget(self.body)
 
-        self._init_footer()
-
-    def _init_footer(self):
-        ...
-
     def update_text_edit(self, rabbit_message):
-        # Обновляем виджет текстовым сообщением
-        # Используем данные из модели RabbitMessage
-        message_text = (
-            f"Name: {rabbit_message.name}\n"
-            f"Car Models: {rabbit_message.carModels}\n"
-            f"Gas Station: {rabbit_message.gasStation}\n"
-            f"Indexes: {rabbit_message.indexes}\n"
-            f"Sails: {rabbit_message.sails}\n"
-            f"Recommendations: {', '.join(rabbit_message.recommendations)}"
-        )
-        self.text_edit.setText(message_text)
+        self.body.update_with_rabbit_message(rabbit_message)
 
     def start(self):
         # Создаем рабочего и передаем в него функцию для выполнения

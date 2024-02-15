@@ -55,6 +55,16 @@ class Body(QWidget):
         self.client_profile_widget = QWidget()
         self.client_profile_widget.setLayout(self.client_profile_layout)
 
+    def update_with_rabbit_message(self, rabbit_message):
+        self.client_name_label.setText(rabbit_message.name)
+        self.client_info_label.setText(
+            f"Car Models: {rabbit_message.carModels}\n"
+            f"Gas Station: {rabbit_message.gasStation}\n"
+            f"Indexes: {rabbit_message.indexes}\n"
+            f"Sails: {rabbit_message.sails}\n"
+            f"Recommendations: {', '.join(rabbit_message.recommendations)}"
+        )
+
     def update_client_profile(self, client_id, client_info, client_avatar_path):
         """Метод для обновления информации профиля пользователя."""
         self.client_id_label.setText(f'ID: {client_id}')
