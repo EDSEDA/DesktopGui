@@ -38,57 +38,73 @@ class MainWindow(QMainWindow):
         self.layout = QGridLayout(self.central_widget)
 
         background_label = QLabel(self)
-        background_pixmap = QPixmap('/path/to/your/image.png')  # Укажите правильный путь к вашему изображению
+        background_pixmap = QPixmap('resources/test_img/test_img.jpg')  # Укажите правильный путь к вашему изображению
         background_label.setPixmap(background_pixmap)
         background_label.setScaledContents(True)
 
         # Добавляем background_label в layout с координатами (0, 0)
         self.layout.addWidget(background_label, 0, 0, 1, 1)
 
-    def init_widgets(self):
-        # Основной виджет и главный макет
-        self.central_widget = QWidget(self)
-        self.setCentralWidget(self.central_widget)
-        self.main_layout = QVBoxLayout(self.central_widget)  # Изменено на QVBoxLayout
-
+    def _init_header(self):
         # Верхний макет для названия компании и даты/времени
         top_layout = QHBoxLayout()
         self.main_layout.addLayout(top_layout)
 
+        top_layout.addStretch()
         # Название компании
         self.company_name_label = QLabel('TATNEFT', self)
-        self.company_name_label.setFont(QFont('Arial', 24))
+        self.company_name_label.setFont(QFont('Arial', 18))
+        self.company_name_label.setFixedHeight(30)
         top_layout.addWidget(self.company_name_label, alignment=Qt.AlignLeft)
 
         # Дата и время (выровнены по правому краю)
         self.date_time_label = QLabel(self)
         self.date_time_label.setFont(QFont('Arial', 16))
+        self.date_time_label.setFixedHeight(30)
         top_layout.addWidget(self.date_time_label, alignment=Qt.AlignRight)
+        top_layout.addStretch()
+        # Таймер для обновления времени каждую секунду
+        self._init_timer()
 
+    def init_widgets(self):
+
+        # Основной виджет и главный макет
+        self.central_widget = QWidget(self)
+        self.setCentralWidget(self.central_widget)
+        self.main_layout = QVBoxLayout(self.central_widget)
+
+        self._init_header()
+        self._init_body()
+        self._init_footer()
+
+    def _init_timer(self):
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self._update_time)
+        self.timer.start(1000)
+
+    def _update_time(self):
+        current_time = QDateTime.currentDateTime().toString('dd.MM.yyyy hh:mm:ss')
+        self.date_time_label.setText(current_time)
+
+    def _init_footer(self):
+        ...
+
+    def _init_body(self):
         # Макет для имени пользователя и профиля
         profile_layout = QHBoxLayout()
         self.main_layout.addLayout(profile_layout)
 
+        # Виджет для профиля пользователя
+        self._init_client_profile()
+        profile_layout.addWidget(self.client_profile_widget, alignment=Qt.AlignRight)
+
+    def _init_client_profile(self):
+        self.client_profile_layout = QVBoxLayout()
+
         # Имя пользователя
         self.client_name_label = QLabel('Владимир', self)
         self.client_name_label.setFont(QFont('Arial', 20))
-        profile_layout.addWidget(self.client_name_label, alignment=Qt.AlignLeft)
-
-        # Виджет для профиля пользователя
-        self.init_client_profile()
-        profile_layout.addWidget(self.client_profile_widget, alignment=Qt.AlignRight)
-
-        # Таймер для обновления времени каждую секунду
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.update_time)
-        self.timer.start(1000)
-
-    def update_time(self):
-        current_time = QDateTime.currentDateTime().toString('dd.MM.yyyy hh:mm:ss')
-        self.date_time_label.setText(current_time)
-
-    def init_client_profile(self):
-        self.client_profile_layout = QVBoxLayout()
+        self.client_profile_layout.addWidget(self.client_name_label, alignment=Qt.AlignLeft)
 
         # Аватар пользователя
         self.avatar_label = QLabel(self)
