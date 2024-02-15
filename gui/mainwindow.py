@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import (QLabel, QVBoxLayout, QHBoxLayout, QWidget,
 from rabbitmq_client.client import RabbitMQClient
 from rabbitmq_client.schema import RabbitMessage
 import json
+from config import settings
 
 
 class MainWindow(QMainWindow):
@@ -28,7 +29,7 @@ class MainWindow(QMainWindow):
 
     def init_queue(self):
         self.queue = Queue()  # Очередь для коммуникации между RabbitMQ потоком и GUI потоком
-        self.rabbitmq_client = RabbitMQClient('my_queue', self.queue)  # Создаем экземпляр клиента RabbitMQ
+        self.rabbitmq_client = RabbitMQClient(self.queue)  # Создаем экземпляр клиента RabbitMQ
         self.rabbitmq_client.start_consuming()  # Начинаем потребление сообщений
         self.message_signal.connect(self.update_text_edit)
 
