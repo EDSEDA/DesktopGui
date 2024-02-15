@@ -176,7 +176,7 @@ class MainWindow(QMainWindow):
             f"Sails: {rabbit_message.sails}\n"
             f"Recommendations: {', '.join(rabbit_message.recommendations)}"
         )
-        self.text_edit.append(message_text)
+        self.text_edit.setText(message_text)
 
     def start(self):
         # Создаем рабочего и передаем в него функцию для выполнения
