@@ -7,6 +7,8 @@ from PyQt5.QtWidgets import (QLabel, QVBoxLayout, QHBoxLayout, QWidget,
                              QApplication, QMainWindow, QStatusBar, QTextEdit)
 
 from rabbitmq_client.client import RabbitMQClient
+from rabbitmq_client.schema import RabbitMessage
+import json
 
 
 class MainWindow(QMainWindow):
@@ -136,10 +138,18 @@ class MainWindow(QMainWindow):
 
     ##################################
 
-    def update_text_edit(self, message):
+    def update_text_edit(self, rabbit_message):
         # Обновляем виджет текстовым сообщением
-        self.text_edit.append(str(message))
-
+        # Используем данные из модели RabbitMessage
+        message_text = (
+            f"Name: {rabbit_message.name}\n"
+            f"Car Models: {rabbit_message.carModels}\n"
+            f"Gas Station: {rabbit_message.gasStation}\n"
+            f"Indexes: {rabbit_message.indexes}\n"
+            f"Sails: {rabbit_message.sails}\n"
+            f"Recommendations: {', '.join(rabbit_message.recomendations)}"
+        )
+        self.text_edit.append(message_text)
     def start(self):
         # Запускаем поток для проверки наличия новых сообщений в queue
         self.thread = QThread()  # Создаем QThread
@@ -147,12 +157,16 @@ class MainWindow(QMainWindow):
         self.thread.start()
 
     def check_queue(self):
-        # Бесконечный цикл для обработки сообщений из RabbitMQ
         while True:
             if not self.queue.empty():
-                message = self.queue.get()  # Получаем сообщение из очереди
-                self.message_signal.emit(message)  # Отправляем сообщение в GUI поток
-
+                message_body = self.queue.get()
+                try:
+                    # Преобразование байтов в строку и десериализация JSON в экземпляр RabbitMessage
+                    message_data = json.loads(message_body.decode('utf-8'))
+                    rabbit_message = RabbitMessage(**message_data)
+                    self.message_signal.emit(rabbit_message)  # Отправляем экземпляр в GUI поток
+                except Exception as e:
+                    print(f"Error processing message: {e}")
 
 def main():
     app = QApplication(sys.argv)
