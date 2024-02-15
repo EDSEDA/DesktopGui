@@ -21,6 +21,7 @@ class Worker(QRunnable):
     def run(self):
         self.function(*self.args, **self.kwargs)
 
+
 class MainWindow(QMainWindow):
     message_signal = pyqtSignal(RabbitMessage)
 
@@ -173,7 +174,7 @@ class MainWindow(QMainWindow):
             f"Gas Station: {rabbit_message.gasStation}\n"
             f"Indexes: {rabbit_message.indexes}\n"
             f"Sails: {rabbit_message.sails}\n"
-            f"Recommendations: {', '.join(rabbit_message.recomendations)}"
+            f"Recommendations: {', '.join(rabbit_message.recommendations)}"
         )
         self.text_edit.append(message_text)
 
@@ -200,6 +201,7 @@ def main():
     app = QApplication(sys.argv)
     main_window = MainWindow()
     main_window.show()
+    main_window.start()
     sys.exit(app.exec_())
 
 
