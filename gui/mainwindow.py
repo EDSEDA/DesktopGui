@@ -32,8 +32,7 @@ class MainWindow(QMainWindow):
         # Установка размера окна
         self.setGeometry(100, 100, 1024, 768)
         self.setWindowTitle('Recommendation system')
-        self.text_edit = QTextEdit(self)
-        self.setCentralWidget(self.text_edit)
+
         self.set_background()
 
         # Инициализация виджетов
@@ -111,7 +110,8 @@ class MainWindow(QMainWindow):
         # Макет для имени пользователя и профиля
         profile_layout = QHBoxLayout()
         self.main_layout.addLayout(profile_layout)
-
+        self.text_edit = QTextEdit(self)
+        profile_layout.addWidget(self.text_edit)
         # Виджет для профиля пользователя
         self._init_client_profile()
         profile_layout.addWidget(self.client_profile_widget, alignment=Qt.AlignRight)
