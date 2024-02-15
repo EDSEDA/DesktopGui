@@ -5,7 +5,7 @@ from queue import Queue
 from PyQt5.QtCore import QThreadPool, QRunnable, pyqtSignal
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (QLabel, QVBoxLayout, QWidget,
-                             QApplication, QMainWindow, QStatusBar, QGridLayout)
+                             QApplication, QMainWindow, QGridLayout)
 
 from gui.body import Body
 from gui.header import Header
