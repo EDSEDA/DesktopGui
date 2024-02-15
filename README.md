@@ -6,6 +6,7 @@ App with PyQt5 and rabbitMQ listener
 
 ## Dependencies
 - RabbitMQ
+  - for init run command: `sudo docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.12-management`
 
 ## Quiq start
 
