@@ -2,12 +2,8 @@ import sys
 
 from PyQt5.QtCore import QTimer, QDateTime, Qt
 from PyQt5.QtGui import QPixmap, QFont
-from PyQt5.QtWidgets import (QMainWindow, QLabel, QStatusBar, QApplication,
-                             QGridLayout, QWidget, QVBoxLayout)
 from PyQt5.QtWidgets import (QLabel, QVBoxLayout, QHBoxLayout, QWidget,
-                             QGridLayout, QApplication, QMainWindow)
-from PyQt5.QtGui import QPixmap, QFont
-from PyQt5.QtCore import QTimer, QDateTime, Qt
+                             QApplication, QMainWindow, QStatusBar)
 
 
 class MainWindow(QMainWindow):
@@ -16,34 +12,16 @@ class MainWindow(QMainWindow):
 
         # Установка размера окна
         self.setGeometry(100, 100, 1024, 768)
-        self.setWindowTitle('My Application')
+        self.setWindowTitle('Recommendation system')
 
-        # Установка фона окна
-        self.set_background()
         # Инициализация виджетов
         self.init_widgets()
-        # Инициализация статусной строки
-        self.init_status_bar()
 
     def init_status_bar(self):
         # Создание статусной строки
         self.status_bar = QStatusBar(self)
         self.setStatusBar(self.status_bar)
         self.status_bar.showMessage("Готово", 5000)
-
-    def set_background(self):
-        # Использование QLabel для установки фона
-        self.central_widget = QWidget(self)
-        self.setCentralWidget(self.central_widget)
-        self.layout = QGridLayout(self.central_widget)
-
-        background_label = QLabel(self)
-        background_pixmap = QPixmap('resources/test_img/test_img.jpg')  # Укажите правильный путь к вашему изображению
-        background_label.setPixmap(background_pixmap)
-        background_label.setScaledContents(True)
-
-        # Добавляем background_label в layout с координатами (0, 0)
-        self.layout.addWidget(background_label, 0, 0, 1, 1)
 
     def init_widgets(self):
         # Основной виджет и главный макет
