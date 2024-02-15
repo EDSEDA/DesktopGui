@@ -1,8 +1,8 @@
+import sys
+
 from PyQt5.QtWidgets import QApplication
+
 from gui.mainwindow import MainWindow
-import sys
-import sys
-import threading
 
 
 def console_listener(window):
@@ -21,8 +21,7 @@ def start_QApp():
     app = QApplication(sys.argv)
     main_window = MainWindow()
     main_window.show()
-    # Запуск слушателя консоли в отдельном потоке
-    threading.Thread(target=console_listener, args=(main_window,), daemon=True).start()
+    main_window.start()
     sys.exit(app.exec_())
 
 

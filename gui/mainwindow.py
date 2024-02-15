@@ -1,21 +1,34 @@
 import sys
+from queue import Queue
 
-from PyQt5.QtCore import QTimer, QDateTime, Qt
+from PyQt5.QtCore import QTimer, QDateTime, Qt, QThread, pyqtSignal
 from PyQt5.QtGui import QPixmap, QFont
 from PyQt5.QtWidgets import (QLabel, QVBoxLayout, QHBoxLayout, QWidget,
-                             QApplication, QMainWindow, QStatusBar)
+                             QApplication, QMainWindow, QStatusBar, QTextEdit)
+
+from rabbitmq_client.client import RabbitMQClient
 
 
 class MainWindow(QMainWindow):
+    message_signal = pyqtSignal(bytes)  # Создаем сигнал для передачи сообщений в GUI поток
+
     def __init__(self):
         super(MainWindow, self).__init__()
+        self.init_queue()
 
         # Установка размера окна
         self.setGeometry(100, 100, 1024, 768)
         self.setWindowTitle('Recommendation system')
-
+        self.text_edit = QTextEdit(self)
+        self.setCentralWidget(self.text_edit)
         # Инициализация виджетов
         self.init_widgets()
+
+    def init_queue(self):
+        self.queue = Queue()  # Очередь для коммуникации между RabbitMQ потоком и GUI потоком
+        self.rabbitmq_client = RabbitMQClient('my_queue', self.queue)  # Создаем экземпляр клиента RabbitMQ
+        self.rabbitmq_client.start_consuming()  # Начинаем потребление сообщений
+        self.message_signal.connect(self.update_text_edit)
 
     def init_status_bar(self):
         # Создание статусной строки
@@ -120,6 +133,25 @@ class MainWindow(QMainWindow):
     ##################################
     def _init_footer(self):
         ...
+
+    ##################################
+
+    def update_text_edit(self, message):
+        # Обновляем виджет текстовым сообщением
+        self.text_edit.append(str(message))
+
+    def start(self):
+        # Запускаем поток для проверки наличия новых сообщений в queue
+        self.thread = QThread()  # Создаем QThread
+        self.thread.started.connect(self.check_queue)
+        self.thread.start()
+
+    def check_queue(self):
+        # Бесконечный цикл для обработки сообщений из RabbitMQ
+        while True:
+            if not self.queue.empty():
+                message = self.queue.get()  # Получаем сообщение из очереди
+                self.message_signal.emit(message)  # Отправляем сообщение в GUI поток
 
 
 def main():
