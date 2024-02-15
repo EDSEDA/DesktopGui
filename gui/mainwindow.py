@@ -24,8 +24,24 @@ class MainWindow(QMainWindow):
         self.setWindowTitle('Recommendation system')
         self.text_edit = QTextEdit(self)
         self.setCentralWidget(self.text_edit)
+        self.set_background()
+
         # Инициализация виджетов
         self.init_widgets()
+
+    def set_background(self):
+        # Использование QLabel для установки фона
+        self.central_widget = QWidget(self)
+        self.setCentralWidget(self.central_widget)
+        self.layout = QGridLayout(self.central_widget)
+
+        background_label = QLabel(self)
+        background_pixmap = QPixmap('resources/test_img/test_img.jpg')  # Укажите правильный путь к вашему изображению
+        background_label.setPixmap(background_pixmap)
+        background_label.setScaledContents(True)
+
+        # Добавляем background_label в layout с координатами (0, 0)
+        self.layout.addWidget(background_label, 0, 0, 1, 1)
 
     def init_queue(self):
         self.queue = Queue()  # Очередь для коммуникации между RabbitMQ потоком и GUI потоком
