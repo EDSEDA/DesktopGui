@@ -59,7 +59,7 @@ class Body(QWidget):
             f"Рекомендации: {', '.join(rabbit_message.recommendations)}"
         )
 
-        new_avatar_pixmap = QPixmap(f'{self.client_avatar_path}/{rabbit_message.name}')
+        new_avatar_pixmap = QPixmap(f'{self.client_avatar_path}/{rabbit_message.name}.jpg')
         self.avatar_label.setPixmap(new_avatar_pixmap.scaled(300, 300, Qt.KeepAspectRatio))
 
     def update_client_profile(self, client_id, client_info, client_avatar_path):
