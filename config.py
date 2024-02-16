@@ -15,3 +15,5 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+CLIENT_AVATAR_PATH = 'resources/clients'

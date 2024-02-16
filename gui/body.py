@@ -1,6 +1,7 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QPixmap
 from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QTextEdit
+from config import CLIENT_AVATAR_PATH
 
 
 class Body(QWidget):
@@ -11,17 +12,39 @@ class Body(QWidget):
         self.main_layout = QVBoxLayout(self)
 
         # Макет для имени пользователя и профиля
-        profile_layout = QHBoxLayout()
+        client_layout = QHBoxLayout()
 
         # Виджет для профиля пользователя
         self._init_client_profile()
-        profile_layout.addWidget(self.client_profile_widget, )  # alignment=Qt.AlignRight
+        client_layout.addWidget(self.client_profile_widget, )  # alignment=Qt.AlignRight
+        self._init_client_recommendations()
+        client_layout.addWidget(self.client_recommendations_widget, )  # alignment=Qt.AlignRight
 
-        # Добавляем profile_layout в main_layout
-        self.main_layout.addLayout(profile_layout)
+        # Добавляем client_layout в main_layout
+        self.main_layout.addLayout(client_layout)
 
         # Установка основного макета для виджета
         self.setLayout(self.main_layout)
+
+    def _init_client_recommendations(self):
+        self.client_recommendation_layout = QVBoxLayout()
+
+        # Надпись "Специально для Вас"
+        special_label = QLabel("Специально для Вас:", self)
+        special_label.setFont(QFont('Arial', 12))
+        special_label.setStyleSheet("font-weight: bold;")
+
+        # Рекомендации
+        self.client_recommendation_label = QLabel(f'Рекомендации: ...', self)
+        self.client_recommendation_label.setFont(QFont('Arial', 12))
+        self.client_recommendation_label.setStyleSheet("border: 1px solid black; padding: 5px;")
+
+        self.client_recommendation_layout.addWidget(special_label, alignment=Qt.AlignLeft)
+        self.client_recommendation_layout.addWidget(self.client_recommendation_label)
+
+        # Контейнер для профиля
+        self.client_recommendations_widget = QWidget()
+        self.client_recommendations_widget.setLayout(self.client_recommendation_layout)
 
     def _init_client_profile(self):
         self.client_profile_layout = QVBoxLayout()
@@ -33,21 +56,20 @@ class Body(QWidget):
 
         # Аватар пользователя
         self.avatar_label = QLabel(self)
-        self.avatar_pixmap = QPixmap(f'{self.client_avatar_path}/base_client_img.png')  # Путь к изображению аватара следует задать здесь
+        self.avatar_pixmap = QPixmap(f'{CLIENT_AVATAR_PATH}/base_client_img.png')  # Путь к изображению аватара следует задать здесь
         self.avatar_label.setPixmap(self.avatar_pixmap.scaled(300, 300, Qt.KeepAspectRatio))
         # self.avatar_label.setPixmap(self.avatar_pixmap.scaled(100, 100, Qt.KeepAspectRatio))
-        self.client_profile_layout.addWidget(self.avatar_label)
+        self.client_profile_layout.addWidget(self.avatar_label, alignment=Qt.AlignCenter)
 
         # Дополнительная информация о пользователе
-        self.client_info_label = QLabel(f'Рекомендации: ...', self)
+        self.client_info_label = QLabel(f'О пользователе: ...', self)
         self.client_info_label.setFont(QFont('Arial', 12))
+        self.client_info_label.setStyleSheet("border: 1px solid black; padding: 5px;")
         self.client_profile_layout.addWidget(self.client_info_label)
 
         # Контейнер для профиля
         self.client_profile_widget = QWidget()
         self.client_profile_widget.setLayout(self.client_profile_layout)
-
-    client_avatar_path = 'resources/clients'
 
     def update_with_rabbit_message(self, rabbit_message):
         self.client_name_label.setText(rabbit_message.name)
@@ -55,18 +77,11 @@ class Body(QWidget):
             f"Модель машины: {rabbit_message.carModels}\n"
             f"Номер колонки: {rabbit_message.gasStation}\n"
             f"Идентификатор: {rabbit_message.indexes}\n"
+        )
+        self.client_recommendation_label.setText(
             f"Скидка: {rabbit_message.sails}\n"
             f"Рекомендации: {', '.join(rabbit_message.recommendations)}"
         )
 
-        new_avatar_pixmap = QPixmap(f'{self.client_avatar_path}/{rabbit_message.name}.jpg')
+        new_avatar_pixmap = QPixmap(f'{CLIENT_AVATAR_PATH}/{rabbit_message.name}.jpg')
         self.avatar_label.setPixmap(new_avatar_pixmap.scaled(300, 300, Qt.KeepAspectRatio))
-
-    def update_client_profile(self, client_id, client_info, client_avatar_path):
-        """Метод для обновления информации профиля пользователя."""
-        self.client_id_label.setText(f'ID: {client_id}')
-        self.client_info_label.setText(client_info)
-
-        if client_avatar_path:
-            new_avatar_pixmap = QPixmap(client_avatar_path)
-            self.avatar_label.setPixmap(new_avatar_pixmap.scaled(100, 100, Qt.KeepAspectRatio))
