@@ -27,26 +27,27 @@ class Body(QWidget):
         self.client_profile_layout = QVBoxLayout()
 
         # Имя пользователя
-        self.client_name_label = QLabel('Владимир', self)
+        self.client_name_label = QLabel('NoName', self)
         self.client_name_label.setFont(QFont('Arial', 20))
         self.client_profile_layout.addWidget(self.client_name_label, alignment=Qt.AlignLeft)
 
         # Аватар пользователя
         self.avatar_label = QLabel(self)
-        self.avatar_pixmap = QPixmap()  # Путь к изображению аватара следует задать здесь
-        self.avatar_label.setPixmap(self.avatar_pixmap.scaled(100, 100, Qt.KeepAspectRatio))
+        self.avatar_pixmap = QPixmap(f'{self.client_avatar_path}/base_client_img.png')  # Путь к изображению аватара следует задать здесь
+        self.avatar_label.setPixmap(self.avatar_pixmap.scaled(300, 300, Qt.KeepAspectRatio))
+        # self.avatar_label.setPixmap(self.avatar_pixmap.scaled(100, 100, Qt.KeepAspectRatio))
         self.client_profile_layout.addWidget(self.avatar_label)
 
         # Дополнительная информация о пользователе
-        is_loyal = False
-        car = 'AUDI RS6'
-        self.client_info_label = QLabel(f'Пр-ма лояльности: {is_loyal}\nМашина: {car}', self)
+        self.client_info_label = QLabel(f'Рекомендации: ...', self)
         self.client_info_label.setFont(QFont('Arial', 12))
         self.client_profile_layout.addWidget(self.client_info_label)
 
         # Контейнер для профиля
         self.client_profile_widget = QWidget()
         self.client_profile_widget.setLayout(self.client_profile_layout)
+
+    client_avatar_path = 'resources/clients'
 
     def update_with_rabbit_message(self, rabbit_message):
         self.client_name_label.setText(rabbit_message.name)
@@ -57,6 +58,9 @@ class Body(QWidget):
             f"Скидка: {rabbit_message.sails}\n"
             f"Рекомендации: {', '.join(rabbit_message.recommendations)}"
         )
+
+        new_avatar_pixmap = QPixmap(f'{self.client_avatar_path}/{rabbit_message.name}')
+        self.avatar_label.setPixmap(new_avatar_pixmap.scaled(300, 300, Qt.KeepAspectRatio))
 
     def update_client_profile(self, client_id, client_info, client_avatar_path):
         """Метод для обновления информации профиля пользователя."""
