@@ -1,5 +1,6 @@
 import json
 import sys
+import time
 from queue import Queue
 
 from PyQt5.QtCore import QThreadPool, QRunnable, pyqtSignal
@@ -91,7 +92,7 @@ class MainWindow(QMainWindow):
                     self.message_signal.emit(rabbit_message)  # Отправляем экземпляр в GUI поток
                 except Exception as e:
                     print(f"Error processing message: {e}")
-
+            time.sleep(0.1)
 
 def main():
     app = QApplication(sys.argv)
