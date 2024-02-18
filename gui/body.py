@@ -131,12 +131,10 @@ class Body(QWidget):
 
         # Рекомендации в таблицу
         for i, recommendation in enumerate(rabbit_message.recommendations):
+            discount = random.choice([0, 10, 20, 30, 40])
             # Добавление новой строки в таблицу на каждой итерации
             row_position = self.client_recommendation_table.rowCount()
             self.client_recommendation_table.insertRow(row_position)
-
-            # Случайная скидка из списка [0, 10, 20, 30, 40]
-            discount = random.choice([0, 10, 20, 30, 40])
 
             # Заполнение данных о товаре и скидке
             self.client_recommendation_table.setItem(row_position, 0, QTableWidgetItem(recommendation))
