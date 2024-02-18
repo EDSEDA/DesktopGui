@@ -5,6 +5,7 @@ from PyQt5.QtGui import QFont, QPixmap
 from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QTextEdit, QListWidgetItem, QListWidget, \
     QTableWidgetItem, QTableWidget, QHeaderView
 from config import CLIENT_AVATAR_PATH
+from rabbitmq_client.schema import RabbitMessage
 
 
 class Body(QWidget):
@@ -123,7 +124,7 @@ class Body(QWidget):
         self.client_profile_widget = QWidget()
         self.client_profile_widget.setLayout(self.client_profile_layout)
 
-    def update_with_rabbit_message(self, rabbit_message):
+    def update_with_rabbit_message(self, rabbit_message: RabbitMessage):
         self.client_name_label.setText(rabbit_message.name)
         self.client_info_label.setText(
             f"Модель машины: {rabbit_message.carModels}\n"
@@ -135,14 +136,14 @@ class Body(QWidget):
 
         # Рекомендации в таблицу
         for i, recommendation in enumerate(rabbit_message.recommendations):
-            discount = random.choice([0, 10, 20, 30, 40])
+            # discount = random.choice([0, 10, 20, 30, 40])
             # Добавление новой строки в таблицу на каждой итерации
             row_position = self.client_recommendation_table.rowCount()
             self.client_recommendation_table.insertRow(row_position)
 
             # Заполнение данных о товаре и скидке
             self.client_recommendation_table.setItem(row_position, 0, QTableWidgetItem(recommendation))
-            self.client_recommendation_table.setItem(row_position, 1, QTableWidgetItem(f"{discount}%"))
+            self.client_recommendation_table.setItem(row_position, 1, QTableWidgetItem(f"{rabbit_message.sails}%"))
 
         # Обновить аватар пользователя
         new_avatar_pixmap = QPixmap(f'{CLIENT_AVATAR_PATH}/{rabbit_message.name}.jpg')
