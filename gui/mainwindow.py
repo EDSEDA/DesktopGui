@@ -4,7 +4,7 @@ import time
 from queue import Queue
 
 from PyQt5.QtCore import QThreadPool, QRunnable, pyqtSignal
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QFont
 from PyQt5.QtWidgets import (QLabel, QVBoxLayout, QWidget,
                              QApplication, QMainWindow, QGridLayout)
 
@@ -30,6 +30,10 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super(MainWindow, self).__init__()
+        # Установка шрифта Montserrat для виджетов, которые будут созданы после этой точки
+        montserrat_font = QFont('Montserrat', 16)
+        self.setFont(montserrat_font)
+
         self.init_queue()
 
         # Установка размера окна
@@ -93,6 +97,7 @@ class MainWindow(QMainWindow):
                 except Exception as e:
                     print(f"Error processing message: {e}")
             time.sleep(0.1)
+
 
 def main():
     app = QApplication(sys.argv)

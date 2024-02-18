@@ -1,6 +1,6 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QPixmap
-from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QTextEdit
+from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QTextEdit, QListWidgetItem, QListWidget
 from config import CLIENT_AVATAR_PATH
 
 
@@ -12,7 +12,7 @@ class Body(QWidget):
         self.main_layout = QVBoxLayout(self)
 
         # Макет для имени пользователя и профиля
-        client_layout = QHBoxLayout()
+        client_layout = QVBoxLayout()
 
         # Виджет для профиля пользователя
         self._init_client_profile()
@@ -31,41 +31,57 @@ class Body(QWidget):
 
         # Надпись "Специально для Вас"
         special_label = QLabel("Специально для Вас:", self)
-        special_label.setFont(QFont('Arial', 12))
+        special_label.setFont(QFont('Montserrat', 16))
         special_label.setStyleSheet("font-weight: bold;")
 
-        # Рекомендации
-        self.client_recommendation_label = QLabel(f'Рекомендации: ...', self)
-        self.client_recommendation_label.setFont(QFont('Arial', 12))
-        self.client_recommendation_label.setStyleSheet("border: 1px solid black; padding: 5px;")
+        # Список Рекомендаций
+        self.client_recommendation_list = QListWidget(self)
+        self.client_recommendation_list.setFont(QFont('Montserrat', 12))  # Использование шрифта Montserrat
+        self.client_recommendation_list.setStyleSheet("background-color: white;")  # Белый фон для списка
+
+        # Добавление примерных рекомендаций
+        for i in range(5):  # Пример добавления 5 рекомендаций
+            item_text = f"Рекомендация {i + 1}: ..."
+            item = QListWidgetItem(item_text)
+            # Установка размера элемента списка, если необходимо
+            # item.setSizeHint(QSize(-1, 50))
+            self.client_recommendation_list.addItem(item)
 
         self.client_recommendation_layout.addWidget(special_label, alignment=Qt.AlignLeft)
-        self.client_recommendation_layout.addWidget(self.client_recommendation_label)
+        self.client_recommendation_layout.addWidget(self.client_recommendation_list)
+
+        # self.client_recommendation_label = QLabel(f'Рекомендации: ...', self)
+        # self.client_recommendation_label.setFont(QFont('Arial', 12))
+        # self.client_recommendation_label.setStyleSheet("border: 1px solid black; padding: 5px;")
+        #
+        # self.client_recommendation_layout.addWidget(special_label, alignment=Qt.AlignLeft)
+        # self.client_recommendation_layout.addWidget(self.client_recommendation_label)
 
         # Контейнер для профиля
         self.client_recommendations_widget = QWidget()
         self.client_recommendations_widget.setLayout(self.client_recommendation_layout)
 
     def _init_client_profile(self):
-        self.client_profile_layout = QVBoxLayout()
-
-        # Имя пользователя
-        self.client_name_label = QLabel('NoName', self)
-        self.client_name_label.setFont(QFont('Arial', 20))
-        self.client_profile_layout.addWidget(self.client_name_label, alignment=Qt.AlignLeft)
+        self.client_profile_layout = QHBoxLayout()
 
         # Аватар пользователя
         self.avatar_label = QLabel(self)
-        self.avatar_pixmap = QPixmap(f'{CLIENT_AVATAR_PATH}/base_client_img.png')  # Путь к изображению аватара следует задать здесь
+        self.avatar_pixmap = QPixmap(f'{CLIENT_AVATAR_PATH}/base_client_img.png')  # Путь к изображению аватара
         self.avatar_label.setPixmap(self.avatar_pixmap.scaled(300, 300, Qt.KeepAspectRatio))
-        # self.avatar_label.setPixmap(self.avatar_pixmap.scaled(100, 100, Qt.KeepAspectRatio))
         self.client_profile_layout.addWidget(self.avatar_label, alignment=Qt.AlignCenter)
 
-        # Дополнительная информация о пользователе
-        self.client_info_label = QLabel(f'О пользователе: ...', self)
+        # Горизонтальная компоновка для имени и информации пользователя
+        info_layout = QVBoxLayout()
+        self.client_name_label = QLabel('NoName', self)
+        self.client_name_label.setFont(QFont('Arial', 20))
+        info_layout.addWidget(self.client_name_label, alignment=Qt.AlignLeft)
+
+        self.client_info_label = QLabel('О пользователе: ...', self)
         self.client_info_label.setFont(QFont('Arial', 12))
-        self.client_info_label.setStyleSheet("border: 1px solid black; padding: 5px;")
-        self.client_profile_layout.addWidget(self.client_info_label)
+        # self.client_info_label.setStyleSheet("border: 1px solid black; padding: 5px;")
+        info_layout.addWidget(self.client_info_label)
+
+        self.client_profile_layout.addLayout(info_layout)
 
         # Контейнер для профиля
         self.client_profile_widget = QWidget()
@@ -78,10 +94,12 @@ class Body(QWidget):
             f"Номер колонки: {rabbit_message.gasStation}\n"
             f"Идентификатор: {rabbit_message.indexes}\n"
         )
-        self.client_recommendation_label.setText(
-            f"Скидка: {rabbit_message.sails}\n"
-            f"Рекомендации: {', '.join(rabbit_message.recommendations)}"
-        )
+        self.client_recommendation_list.clear()
+
+        # Рекомендации в список
+        for recommendation in rabbit_message.recommendations:
+            item = QListWidgetItem(f"Скидка: {rabbit_message.sails} - Рекомендация: {recommendation}")
+            self.client_recommendation_list.addItem(item)
 
         new_avatar_pixmap = QPixmap(f'{CLIENT_AVATAR_PATH}/{rabbit_message.name}.jpg')
         self.avatar_label.setPixmap(new_avatar_pixmap.scaled(300, 300, Qt.KeepAspectRatio))

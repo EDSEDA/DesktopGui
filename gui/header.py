@@ -7,13 +7,9 @@ class Header(QHBoxLayout):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.addStretch()
-        self.company_name_label = QLabel('Компания Х')
-        self.company_name_label.setFont(QFont('Arial', 18))
-        self.company_name_label.setFixedHeight(30)
-        self.addWidget(self.company_name_label, alignment=Qt.AlignLeft)
 
         self.date_time_label = QLabel()
-        self.date_time_label.setFont(QFont('Arial', 16))
+        # self.date_time_label.setFont(QFont('Arial', 16))
         self.date_time_label.setFixedHeight(30)
         self.addWidget(self.date_time_label, alignment=Qt.AlignRight)
         self.addStretch()
