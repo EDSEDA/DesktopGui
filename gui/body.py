@@ -16,7 +16,7 @@ class Body(QWidget):
 
         # Виджет для профиля пользователя
         self._init_client_profile()
-        client_layout.addWidget(self.client_profile_widget, )  # alignment=Qt.AlignRight
+        client_layout.addWidget(self.client_profile_widget)  # alignment=Qt.AlignRight
         self._init_client_recommendations()
         client_layout.addWidget(self.client_recommendations_widget, )  # alignment=Qt.AlignRight
 
@@ -60,19 +60,21 @@ class Body(QWidget):
         # Аватар пользователя
         self.avatar_label = QLabel(self)
         self.avatar_pixmap = QPixmap(f'{CLIENT_AVATAR_PATH}/base_client_img.png')  # Путь к изображению аватара
-        self.avatar_label.setPixmap(self.avatar_pixmap.scaled(300, 300, Qt.KeepAspectRatio))
-        self.client_profile_layout.addWidget(self.avatar_label, alignment=Qt.AlignCenter)
+        self.avatar_label.setPixmap(self.avatar_pixmap.scaled(250, 250, Qt.KeepAspectRatio))
+        self.client_profile_layout.addWidget(self.avatar_label, alignment=Qt.AlignTop)
 
         # Горизонтальная компоновка для имени и информации пользователя
         info_layout = QVBoxLayout()
+
         self.client_name_label = QLabel('Имя клиента', self)
         self.client_name_label.setFont(QFont('Montserrat', 20))
-        info_layout.addWidget(self.client_name_label, alignment=Qt.AlignLeft)
+        info_layout.addWidget(self.client_name_label, alignment=Qt.AlignTop)
 
         self.client_info_label = QLabel('''Модель машины: X\nНомер колонки: X\nИдентификатор: X''', self)
         self.client_info_label.setFont(QFont('Montserrat', 12))
         # self.client_info_label.setStyleSheet("border: 1px solid black; padding: 5px;")
-        info_layout.addWidget(self.client_info_label)
+        info_layout.addWidget(self.client_info_label, alignment=Qt.AlignTop)
+        # Установка интервала между элементами компоновки
 
         self.client_profile_layout.addLayout(info_layout)
 

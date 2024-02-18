@@ -9,7 +9,7 @@ class Header(QHBoxLayout):
         self.addStretch()
 
         self.date_time_label = QLabel()
-        # self.date_time_label.setFont(QFont('Arial', 16))
+        self.date_time_label.setFont(QFont('Montserrat', 14))
         self.date_time_label.setFixedHeight(30)
         self.addWidget(self.date_time_label, alignment=Qt.AlignRight)
         self.addStretch()

@@ -37,7 +37,7 @@ class MainWindow(QMainWindow):
         self.init_queue()
 
         # Установка размера окна
-        self.setGeometry(100, 100, 1024, 768)
+        self.setGeometry(100, 100, 768, 768)
         self.setWindowTitle('Recommendation system')
 
         self.set_background()
