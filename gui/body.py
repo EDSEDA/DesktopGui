@@ -50,13 +50,6 @@ class Body(QWidget):
         self.client_recommendation_layout.addWidget(special_label, alignment=Qt.AlignLeft)
         self.client_recommendation_layout.addWidget(self.client_recommendation_list)
 
-        # self.client_recommendation_label = QLabel(f'Рекомендации: ...', self)
-        # self.client_recommendation_label.setFont(QFont('Arial', 12))
-        # self.client_recommendation_label.setStyleSheet("border: 1px solid black; padding: 5px;")
-        #
-        # self.client_recommendation_layout.addWidget(special_label, alignment=Qt.AlignLeft)
-        # self.client_recommendation_layout.addWidget(self.client_recommendation_label)
-
         # Контейнер для профиля
         self.client_recommendations_widget = QWidget()
         self.client_recommendations_widget.setLayout(self.client_recommendation_layout)
@@ -72,12 +65,12 @@ class Body(QWidget):
 
         # Горизонтальная компоновка для имени и информации пользователя
         info_layout = QVBoxLayout()
-        self.client_name_label = QLabel('NoName', self)
-        self.client_name_label.setFont(QFont('Arial', 20))
+        self.client_name_label = QLabel('Имя клиента', self)
+        self.client_name_label.setFont(QFont('Montserrat', 20))
         info_layout.addWidget(self.client_name_label, alignment=Qt.AlignLeft)
 
-        self.client_info_label = QLabel('О пользователе: ...', self)
-        self.client_info_label.setFont(QFont('Arial', 12))
+        self.client_info_label = QLabel('''Модель машины: X\nНомер колонки: X\nИдентификатор: X''', self)
+        self.client_info_label.setFont(QFont('Montserrat', 12))
         # self.client_info_label.setStyleSheet("border: 1px solid black; padding: 5px;")
         info_layout.addWidget(self.client_info_label)
 
