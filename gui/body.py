@@ -1,6 +1,9 @@
+import random
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QPixmap
-from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QTextEdit, QListWidgetItem, QListWidget
+from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout, QHBoxLayout, QTextEdit, QListWidgetItem, QListWidget, \
+    QTableWidgetItem, QTableWidget, QHeaderView
 from config import CLIENT_AVATAR_PATH
 
 
@@ -34,25 +37,63 @@ class Body(QWidget):
         special_label.setFont(QFont('Montserrat', 16))
         special_label.setStyleSheet("font-weight: bold;")
 
-        # Список Рекомендаций
-        self.client_recommendation_list = QListWidget(self)
-        self.client_recommendation_list.setFont(QFont('Montserrat', 12))  # Использование шрифта Montserrat
-        self.client_recommendation_list.setStyleSheet("background-color: white;")  # Белый фон для списка
+        # Таблица рекомендаций
+        self.client_recommendation_table = QTableWidget(self)
+        self.client_recommendation_table.setFont(QFont('Montserrat', 12))  # Использование шрифта Montserrat
+        self.client_recommendation_table.setStyleSheet("background-color: white;")  # Белый фон для таблицы
 
-        # Добавление примерных рекомендаций
-        for i in range(5):  # Пример добавления 5 рекомендаций
-            item_text = f"Рекомендация {i + 1}: ..."
-            item = QListWidgetItem(item_text)
-            # Установка размера элемента списка, если необходимо
-            # item.setSizeHint(QSize(-1, 50))
-            self.client_recommendation_list.addItem(item)
+        # Устанавливаем количество строк и колонок
+        self.client_recommendation_table.setRowCount(5)  # Пример для 5 рекомендаций
+        self.client_recommendation_table.setColumnCount(2)  # Две колонки: имя товара и скидка на товар
 
+        # Устанавливаем заголовки для колонок
+        self.client_recommendation_table.setHorizontalHeaderLabels(['Имя товара', 'Скидка на товар'])
+
+        # Заполняем таблицу данными (пример)
+        for i in range(5):
+            self.client_recommendation_table.setItem(i, 0, QTableWidgetItem(f'Товар {i + 1}'))
+            self.client_recommendation_table.setItem(i, 1, QTableWidgetItem(f'{i * 10}%'))  # Пример скидки
+
+        # Разрешаем выделение строк
+        self.client_recommendation_table.setSelectionBehavior(QTableWidget.SelectRows)
+
+        # Делаем колонки растягивающимися на всю ширину виджета
+        self.client_recommendation_table.horizontalHeader().setStretchLastSection(True)
+        self.client_recommendation_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+
+        # Добавляем таблицу в компоновку
         self.client_recommendation_layout.addWidget(special_label, alignment=Qt.AlignLeft)
-        self.client_recommendation_layout.addWidget(self.client_recommendation_list)
+        self.client_recommendation_layout.addWidget(self.client_recommendation_table)
 
-        # Контейнер для профиля
+        # Контейнер для рекомендаций
         self.client_recommendations_widget = QWidget()
         self.client_recommendations_widget.setLayout(self.client_recommendation_layout)
+        # self.client_recommendation_layout = QVBoxLayout()
+        #
+        # # Надпись "Специально для Вас"
+        # special_label = QLabel("Специально для Вас:", self)
+        # special_label.setFont(QFont('Montserrat', 16))
+        # special_label.setStyleSheet("font-weight: bold;")
+        #
+        # # Список Рекомендаций
+        # self.client_recommendation_list = QListWidget(self)
+        # self.client_recommendation_list.setFont(QFont('Montserrat', 12))  # Использование шрифта Montserrat
+        # self.client_recommendation_list.setStyleSheet("background-color: white;")  # Белый фон для списка
+        #
+        # # Добавление примерных рекомендаций
+        # for i in range(5):  # Пример добавления 5 рекомендаций
+        #     item_text = f"Рекомендация {i + 1}: ..."
+        #     item = QListWidgetItem(item_text)
+        #     # Установка размера элемента списка, если необходимо
+        #     # item.setSizeHint(QSize(-1, 50))
+        #     self.client_recommendation_list.addItem(item)
+        #
+        # self.client_recommendation_layout.addWidget(special_label, alignment=Qt.AlignLeft)
+        # self.client_recommendation_layout.addWidget(self.client_recommendation_list)
+        #
+        # # Контейнер для профиля
+        # self.client_recommendations_widget = QWidget()
+        # self.client_recommendations_widget.setLayout(self.client_recommendation_layout)
 
     def _init_client_profile(self):
         self.client_profile_layout = QHBoxLayout()
@@ -84,17 +125,23 @@ class Body(QWidget):
 
     def update_with_rabbit_message(self, rabbit_message):
         self.client_name_label.setText(rabbit_message.name)
-        self.client_info_label.setText(
-            f"Модель машины: {rabbit_message.carModels}\n"
-            f"Номер колонки: {rabbit_message.gasStation}\n"
-            f"Идентификатор: {rabbit_message.indexes}\n"
-        )
-        self.client_recommendation_list.clear()
 
-        # Рекомендации в список
-        for recommendation in rabbit_message.recommendations:
-            item = QListWidgetItem(f"Скидка: {rabbit_message.sails} - Рекомендация: {recommendation}")
-            self.client_recommendation_list.addItem(item)
+        # Очистить текущую таблицу рекомендаций
+        self.client_recommendation_table.setRowCount(0)
 
+        # Рекомендации в таблицу
+        for i, recommendation in enumerate(rabbit_message.recommendations):
+            # Добавление новой строки в таблицу на каждой итерации
+            row_position = self.client_recommendation_table.rowCount()
+            self.client_recommendation_table.insertRow(row_position)
+
+            # Случайная скидка из списка [0, 10, 20, 30, 40]
+            discount = random.choice([0, 10, 20, 30, 40])
+
+            # Заполнение данных о товаре и скидке
+            self.client_recommendation_table.setItem(row_position, 0, QTableWidgetItem(recommendation))
+            self.client_recommendation_table.setItem(row_position, 1, QTableWidgetItem(f"{discount}%"))
+
+        # Обновить аватар пользователя
         new_avatar_pixmap = QPixmap(f'{CLIENT_AVATAR_PATH}/{rabbit_message.name}.jpg')
         self.avatar_label.setPixmap(new_avatar_pixmap.scaled(300, 300, Qt.KeepAspectRatio))
