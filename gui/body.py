@@ -125,7 +125,11 @@ class Body(QWidget):
 
     def update_with_rabbit_message(self, rabbit_message):
         self.client_name_label.setText(rabbit_message.name)
-
+        self.client_info_label.setText(
+            f"Модель машины: {rabbit_message.carModels}\n"
+            f"Номер колонки: {rabbit_message.gasStation}\n"
+            f"Идентификатор: {rabbit_message.indexes}\n"
+        )
         # Очистить текущую таблицу рекомендаций
         self.client_recommendation_table.setRowCount(0)
 
